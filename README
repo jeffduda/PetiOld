@@ -1,0 +1,17 @@
+Homepage:  TBA
+
+Introduction -- Petiole is a set of experimental tools for computational
+neuroanatomy based on medical images. Petiole provides extensions and 
+add-on's to ITK (http://www.itk.org) and ANTS (http://www.picsl.upenn.edu/ANTS).
+
+Petiole -- Origin
+
+1) In botany, the petiole is the stalk of a leaf and provides a connection between
+the stem and a leaf. Under this metaphor, the "stem" is ITK+ANTS and the leaf
+is a desired tool.
+
+2) In entomology, the petiole provides a connection between segments of the ant.
+A common theme among the tools being developed here is using ITK+ANTS to 
+implement measures of structural and functional connectivity.
+
+
