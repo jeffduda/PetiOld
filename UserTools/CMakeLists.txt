@@ -65,6 +65,9 @@ LINK_DIRECTORIES( ${ITK_LIBRARY_PATH} ${VTK_LIBRARY_PATH} ${ANTS_LIBRARY_DIR} )
 ADD_EXECUTABLE( petioleConnectivity petioleConnectivity.cxx )
 TARGET_LINK_LIBRARIES( petioleConnectivity ANTSCommandLine ${ITK_LIBRARIES} vtkIO vtkRendering vtksys  )
 
+ADD_EXECUTABLE( petioleFibers petioleFibers.cxx )
+TARGET_LINK_LIBRARIES( petioleFibers ANTSCommandLine ${ITK_LIBRARIES} vtkIO vtkRendering vtksys  )
+
 # -----------------------------------------------------------------------------#
 # Perform corresponding testing
 #

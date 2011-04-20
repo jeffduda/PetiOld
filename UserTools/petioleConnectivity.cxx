@@ -10,7 +10,7 @@
 #include "antsDijkstrasPathGraphFilter.h"
 #include "antsDijkstrasGraphTraits.h"
 #include "itkMaskImageToGraphFunctor.h"
-#include "itkMaskImageEdgesToGraphFunctor.h"
+//#include "itkMaskImageEdgesToGraphFunctor.h"
 #include "itkGraph.h"
 #include "itkBoykovGraphTraits.h"
 #include "antsDijkstrasGraphTraits.h"
@@ -526,10 +526,10 @@ int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *optio
   if( outputOption )
     {
 		std::cout << "Writer not yet implemented" << std::endl;
-    typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
-    writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
-    writeGraph->SetInput( output );
-    writeGraph->Update();
+    //typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
+    //writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
+    //writeGraph->SetInput( output );
+    //writeGraph->Update();
     }
 
 
@@ -637,12 +637,12 @@ int Connectivity( itk::ants::CommandLineParser *parser )
       {
       case 2:
         {
-        DiffusionTensorConnectivity<2, float>( diffusionTensorOption, outputOption );
+        //DiffusionTensorConnectivity<2, float>( diffusionTensorOption, outputOption );
         break;
         }
       case 3:
         {
-        DiffusionTensorConnectivity<3, float>( diffusionTensorOption, outputOption );
+        //DiffusionTensorConnectivity<3, float>( diffusionTensorOption, outputOption );
         break;
         }
       default:
@@ -664,17 +664,17 @@ int Connectivity( itk::ants::CommandLineParser *parser )
       {
       case 2:
         {
-        TimeConnectivity<2, float>( timeOption, outputOption );
+        //TimeConnectivity<2, float>( timeOption, outputOption );
         break;
         }
       case 3:
         {
-        TimeConnectivity<3, float>( timeOption, outputOption );
+        //TimeConnectivity<3, float>( timeOption, outputOption );
         break;
         }
       case 4:
         {
-        TimeConnectivity<4, float>( timeOption, outputOption );
+        //TimeConnectivity<4, float>( timeOption, outputOption );
         break;
         }  
       default:
@@ -700,7 +700,7 @@ int Connectivity( itk::ants::CommandLineParser *parser )
         }
       case 3:
         {
-        Dijkstras<3, float>( dijkstrasOption, outputOption );
+        //Dijkstras<3, float>( dijkstrasOption, outputOption );
         break;
         }
       default:
@@ -728,7 +728,7 @@ int Connectivity( itk::ants::CommandLineParser *parser )
         }
       case 3:
         {
-        GraphWeights<3, float>( graphWeightsOption, outputOption );
+        //GraphWeights<3, float>( graphWeightsOption, outputOption );
         break;
         }
       default:
