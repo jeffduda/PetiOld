@@ -1,35 +1,14 @@
-/*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: antsVtkPolyDataFileWriter.h,v $
-  Language:  C++
-  Date:      $Date: 2009/03/04 23:10:58 $
-  Version:   $Revision: 1.17 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
-#ifndef __antsGraphFileWriter_h
-#define __antsGraphFileWriter_h
+#ifndef __itkGraphFileWriter_h
+#define __itkGraphFileWriter_h
 
 #include "itkGraph.h"
+#include "itkMesh.h"
+#include "antsVtkPolyDataFileWriter.h"
 
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
-#include "vtkCellArray.h"
-#include "vtkTriangleFilter.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkPolyDataReader.h"
 
 namespace itk {
-namespace ants {
 
-/** \class VtkPolyDataFileWriter
+/** \class GraphFileWriter
  * \brief
  * Writes an itkMesh to a file in various txt file formats.
  *
@@ -66,6 +45,10 @@ public:
   typedef typename InputGraphType::GraphTraitsType GraphTraitsType;
   typedef typename GraphTraitsType::IndexType      IndexType;
   
+  typedef Mesh<float, TInputGraph::GraphTraitsType::ImageDimension>   MeshType; 
+  typedef typename MeshType::PointType           PointType;
+  typedef ants::VtkPolyDataFileWriter<MeshType>  VtkWriterType;
+  
   typedef TInputImage                              InputImageType;
   typedef typename InputImageType::IndexType       ImageIndexType;
   
@@ -97,12 +80,11 @@ private:
 
 };
 
-}
 } // namespace itk
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "antsGraphFileWriter.txx"
+#include "itkGraphFileWriter.txx"
 #endif
 
 #endif

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: antsGraphFileWriter.txx,v $
+  Module:    $RCSfile: itkGraphFileWriter.txx,v $
   Language:  C++
   Date:      $Date: 2009/03/04 23:10:58 $
   Version:   $Revision: 1.18 $
@@ -14,25 +14,13 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __antsGraphFileWriter_txx
-#define __antsGraphFileWriter_txx
+#ifndef __itkGraphFileWriter_txx
+#define __itkGraphFileWriter_txx
 
-#include "antsGraphFileWriter.h"
-
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
-#include "vtkCellArray.h"
-#include "vtkTriangleFilter.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkPolyDataReader.h"
-#include "vtkPointData.h"
-#include "vtkCellData.h"
-#include "vtkFloatArray.h"
-
+#include "itkGraphFileWriter.h"
 #include <fstream>
 
 namespace itk {
-namespace ants {
 
 //
 // Constructor
@@ -138,60 +126,43 @@ void
 GraphFileWriter<TInputGraph,TInputImage>
 ::WriteVtkPolyData()
 {
-  vtkPoints * pointSet = vtkPoints::New();
-  pointSet->Initialize();
-  pointSet->SetNumberOfPoints( this->m_Input->GetTotalNumberOfNodes() );  
-  
-  //vtkPointData * nodeWeights = vtkPointData::New();
-  vtkFloatArray * nodeWeights = vtkFloatArray::New();
-  nodeWeights->SetNumberOfTuples(1);
-  nodeWeights->SetNumberOfValues( this->m_Input->GetTotalNumberOfNodes() ); // this allocates memory
-  nodeWeights->SetName( "node-weights" );
-  
+
+  // convert to itk mesh
+  typename MeshType::Pointer mesh = MeshType::New();
+  mesh->GetPoints()->Reserve( this->m_Input->GetTotalNumberOfNodes() );
+
   for (unsigned int i=0; i<this->m_Input->GetTotalNumberOfNodes(); i++)
-    {
-    float pt[this->m_Input->GetNode(i).ImageIndex.GetIndexDimension()];
-    
+    { 
+    PointType meshPoint;
+        
+    // FIXME - add option to pass reference image for conversion to spatial points
     for (unsigned int j=0; j<this->m_Input->GetNode(i).ImageIndex.GetIndexDimension(); j++)
       {
-      pt[j] = this->m_Input->GetNode(i).ImageIndex[j];
+      meshPoint[j] = this->m_Input->GetNode(i).ImageIndex[j];
       }
-    pointSet->SetPoint(i,pt);
-    nodeWeights->SetValue(i,this->m_Input->GetNode(i).Weight);
+
+    mesh->SetPoint( this->m_Input->GetNode(i).Identifier, meshPoint );
+    
     }
     
-  vtkCellArray * edges = vtkCellArray::New();
-  edges->Initialize();
-  
-  vtkFloatArray * edgeWeights = vtkFloatArray::New();
-  edgeWeights->SetNumberOfTuples(1);
-  edgeWeights->SetNumberOfValues( this->m_Input->GetTotalNumberOfEdges() ); // this allocates memory
-  edgeWeights->SetName( "edge-weights" );
-  
-  vtkIdType * pts = new vtkIdType [ 2 ];
-  for (unsigned int i=0; i<m_Input->GetTotalNumberOfEdges(); i++)
-    {
-    pts[0] = this->m_Input->GetEdge(i).SourceIdentifier;
-    pts[1] = this->m_Input->GetEdge(i).TargetIdentifier;
-    edges->InsertNextCell(2,pts);
-    edgeWeights->SetValue(i,this->m_Input->GetEdge(i).Weight);
+    
+  typename VtkWriterType::LineSetType::Pointer lines = VtkWriterType::LineSetType::New();
+  lines->Reserve( this->m_Input->GetTotalNumberOfEdges() );
+  for (unsigned int i=0; i<this->m_Input->GetTotalNumberOfEdges(); i++)
+    { 
+    typename VtkWriterType::LineType line(2);
+    line[0] = this->m_Input->GetEdge(i).SourceIdentifier;
+    line[1] = this->m_Input->GetEdge(i).TargetIdentifier;
+    lines->InsertElement( i, line );
     }
-  delete [] pts;
-  
-  std::cout << nodeWeights->GetNumberOfTuples() << std::endl;
-  
-  vtkPolyData * outputData = vtkPolyData::New();
-  outputData->Initialize();
-  outputData->SetPoints( pointSet );
-  outputData->SetLines( edges );
-  outputData->GetPointData()->AddArray( nodeWeights );
-  outputData->GetCellData()->AddArray( edgeWeights );
-  
-  vtkPolyDataWriter * writer = vtkPolyDataWriter::New();
-  writer->SetInput( outputData );
-  writer->SetFileName( this->m_FileName.c_str() );
-  //writer->SetFileTypeToBinary();
+    
+    
+  typename VtkWriterType::Pointer writer = VtkWriterType::New();
+  writer->SetFileName( this->m_FileName );
+  writer->SetInput( mesh );
+  writer->SetLines( lines );
   writer->Update();
+  
 }
 
 template<class TInputGraph, class TInputImage>
@@ -223,7 +194,7 @@ GraphFileWriter<TInputGraph,TInputImage>
   os << indent << "FileName: " << this->m_FileName << std::endl;
 }
 
-}
+
 } //end of namespace itk
 
 #endif
