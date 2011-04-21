@@ -15,4 +15,14 @@ packages such as VTK (http://www.vtk.org) and Boost (http://www.boost.org).
 A common theme among the tools being developed here is using ITK+ANTS to 
 implement measures of structural and functional connectivity.
 
+Tools
 
+1) petioleFibers - A tool designed for working with fiber bundles which 
+are stored as vtk polylines. The primary purpose of these tools is to use clusters
+of streamlines to create geometric models that provide a basis for statistical
+analysis. Typically, these streamlines are derived from diffusion tensor MRI
+tractography methods. A useful tool for generating the streamlines is the 
+Camino toolkit ( http://http://web4.cs.ucl.ac.uk/research/medic/camino/pmwiki/pmwiki.php )
+
+2) petioleConnecivity - A tool for exploring methods for measuring connectivity. This includes
+an emphasis on graph-based methods for measuring structural connectivity. 
