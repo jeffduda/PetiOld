@@ -69,7 +69,7 @@ public:
   typedef VectorContainer<long, 
     MultiComponentScalarType>                    MultiComponentScalarSetType; 
   typedef VectorContainer<long,
-    SmartPointer<MultiComponentScalarSetType> >                 MultiComponentScalarMultiSetType;  
+    SmartPointer<MultiComponentScalarSetType> >   MultiComponentScalarMultiSetType;  
   typedef VectorContainer<long, std::string >     MultiComponentScalarSetNamesType;
     
   typedef VectorContainer<long, LineType>        LineSetType; 

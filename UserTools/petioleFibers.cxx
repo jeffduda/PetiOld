@@ -182,7 +182,7 @@ typename itk::VectorContainer<unsigned int, float>::Pointer ParameterizeBSplineB
 
 
 template <unsigned int Dimension, class PixelType>
-int fibersFiberOps( itk::ants::CommandLineParser::OptionType *option,
+int FiberOps( itk::ants::CommandLineParser::OptionType *option,
   itk::ants::CommandLineParser::OptionType *outputOption = NULL )
 {
 
@@ -468,6 +468,305 @@ int fibersFiberOps( itk::ants::CommandLineParser::OptionType *option,
 
   return EXIT_SUCCESS;
 }
+
+
+template <unsigned int Dimension, class PixelType>
+int PointData( itk::ants::CommandLineParser::OptionType *option,
+  itk::ants::CommandLineParser::OptionType *outputOption, itk::ants::CommandLineParser::OptionListType optional )
+{
+
+  if( option->GetNumberOfParameters( 0 ) < 1 )
+    {
+    std::cerr << "fibers:  Incorrect number of parameters." << std::endl;
+    return EXIT_FAILURE; 
+    }
+
+  std::string value = option->GetValue( 0 );
+  ConvertToLowerCase( value );
+
+  typedef itk::Mesh<float,Dimension> MeshType;
+  typedef itk::ants::VtkPolyDataFileReader<MeshType> MeshReaderType;
+  typedef itk::ants::VtkPolyDataFileWriter<MeshType> MeshWriterType;
+    
+  typename MeshReaderType::Pointer meshReader = MeshReaderType::New();
+
+
+
+  if( strcmp( value.c_str(), "arc-length" ) == 0 ) 
+    {
+    
+    meshReader->SetFileName( option->GetParameter( 0 ) );
+    meshReader->Update(); 
+    
+    std::string dataName = "arc-length";
+    if ( option->GetNumberOfParameters( 0 ) > 1 )
+    {
+      dataName = option->GetParameter( 1 );
+    }
+
+    bool normalize = false;
+    itk::ants::CommandLineParser::OptionListType::iterator it = optional.begin();
+    while ( !(it == optional.end()) )
+      {
+      
+      if ( (*it)->GetLongName() == "normalize" )
+        {
+        normalize = true;
+        }
+      ++it;      
+      }
+    
+    typename MeshReaderType::LineSetType::Pointer lines = meshReader->GetLines();
+    typename MeshType::Pointer points = meshReader->GetOutput();
+    
+    typename MeshWriterType::MultiComponentScalarSetType::Pointer arclengths 
+      = MeshWriterType::MultiComponentScalarSetType::New(); 
+    arclengths->Reserve( points->GetNumberOfPoints() );
+    
+    float maxS = 0.0;
+    
+    for (unsigned int i=0; i<lines->Size(); i++)
+      {
+
+      typename MeshReaderType::LineType line = lines->GetElement(i);
+
+      float s = 0.0;
+      typename MeshWriterType::MultiComponentScalarType sValue;
+      sValue.SetSize(1);
+      sValue[0] = s;      
+      arclengths->InsertElement( line[0], sValue );
+      
+      for (unsigned int j=1; j<line.Size(); j++)
+        {
+        typename MeshType::PointType prevPoint = points->GetPoint(j-1);
+        typename MeshType::PointType point = points->GetPoint(j);
+        
+        typename MeshWriterType::MultiComponentScalarType sValue;
+        sValue.SetSize(1);
+        s = s + prevPoint.EuclideanDistanceTo( point );
+        
+        if (s > maxS)
+          {
+          maxS = s;
+          }
+          
+        sValue[0] = s;
+        arclengths->InsertElement( line[j], sValue );        
+        }
+      }      
+     
+    if ( normalize )  
+      {
+      for (unsigned int i=0; i<arclengths->Size(); i++)
+        {
+        typename MeshWriterType::MultiComponentScalarType sValue = arclengths->GetElement(i);
+        sValue[0] = sValue[0] / maxS;
+        arclengths->InsertElement(i, sValue);
+        }
+      }
+
+
+    // FIXME - copy existing data from reader to retain in final output
+    typename MeshWriterType::MultiComponentScalarMultiSetType::Pointer dataSets 
+      = MeshWriterType::MultiComponentScalarMultiSetType::New();
+    dataSets->Reserve(1);
+    dataSets->SetElement(0, arclengths);
+    
+    typename MeshWriterType::MultiComponentScalarSetNamesType::Pointer dataNames
+      =  MeshWriterType::MultiComponentScalarSetNamesType::New();
+    dataNames->Reserve(1);
+    dataNames->SetElement(0, dataName);
+
+    
+    typename MeshWriterType::Pointer meshWriter = MeshWriterType::New();
+    meshWriter->SetFileName( outputOption->GetValue( 0 ) );
+    meshWriter->SetInput( points );
+    meshWriter->SetLines( lines );
+    meshWriter->SetMultiComponentScalarSets( dataSets );
+    meshWriter->SetMultiComponentScalarSetNames( dataNames );
+    meshWriter->Update();
+    
+    return EXIT_SUCCESS;
+    
+    }
+  else if( strcmp( value.c_str(), "reverse" ) == 0 ) 
+    {
+   
+    meshReader->SetFileName( option->GetParameter( 0 ) );
+    meshReader->Update();   
+    
+    typename MeshReaderType::LineSetType::Pointer lines = meshReader->GetLines();
+    typename MeshType::Pointer points = meshReader->GetOutput();
+    typename MeshReaderType::LineSetType::Pointer outLines = MeshReaderType::LineSetType::New();
+    outLines->Initialize();
+    
+    
+    for (unsigned int i=0; i<lines->Size(); i++)
+      {
+
+      typename MeshReaderType::LineType line = lines->GetElement(i);
+
+      typename MeshReaderType::LineType rLine;
+      rLine.SetSize( line.Size() );
+        
+      unsigned int * ptBuffer = new unsigned int [ line.Size() ];
+      for (unsigned int j=0; j<line.Size(); j++)
+        {
+        ptBuffer[j] = line[j];
+        }
+      for (unsigned int j=0; j<line.Size(); j++)
+        {
+        rLine[j] = line[line.Size() - 1 - j]; 
+        }
+      lines->InsertElement(i,rLine);
+      
+      delete [] ptBuffer;
+      }
+    
+    typename MeshWriterType::Pointer meshWriter = MeshWriterType::New();
+    meshWriter->SetFileName( outputOption->GetValue( 0 ) );
+    meshWriter->SetInput( points );
+    meshWriter->SetLines( lines );
+    meshWriter->Update();
+    
+    return EXIT_SUCCESS;    
+    
+    
+    }
+  else if( strcmp( value.c_str(), "trim" ) == 0 ) 
+    {
+    
+    meshReader->SetFileName( option->GetParameter( 0 ) );
+    meshReader->Update(); 
+    typename MeshReaderType::LineSetType::Pointer lines = meshReader->GetLines();
+    typename MeshType::Pointer points = meshReader->GetOutput();
+    
+    typename MeshReaderType::Pointer refReader = MeshReaderType::New();
+    refReader->SetFileName( option->GetParameter( 1 ) );
+    refReader->Update();
+         
+    typename MeshType::PointsContainer::Pointer refPoints = refReader->GetOutput()->GetPoints();
+    typename MeshReaderType::LineType refLine = refReader->GetLines()->GetElement(0);
+
+    typename MeshType::PointType startPt = refPoints->GetElement( refLine[0] );
+    typename MeshType::PointType endPt = refPoints->GetElement( refLine[refLine.Size()-1] );    
+    
+    unsigned long * starts = new unsigned long [ lines->Size() ];
+    unsigned long * ends = new unsigned long [ lines->Size() ];
+    unsigned long nOutPoints = 0;  
+  
+    for (unsigned int i=0; i<lines->Size(); i++)
+      {
+
+      typename MeshReaderType::LineType line = lines->GetElement(i);
+      
+      float sDist = 0;
+      float eDist = 0;
+      starts[i] = 0;
+      ends[i] = 0;
+      
+      for (unsigned int j=0; j<line.Size(); j++)
+        {
+        
+        typename MeshType::PointType refPoint = points->GetPoints()->GetElement( line[j] );
+        
+        float sRefDist = refPoint.EuclideanDistanceTo( startPt );
+        float eRefDist = refPoint.EuclideanDistanceTo( endPt );
+        
+        if (j==0)
+          {
+          sDist = sRefDist;
+          eDist = eRefDist;
+          }
+        else
+          {
+          if (sRefDist < sDist)
+            {
+            sDist = sRefDist;
+            starts[i] = j;
+            }
+          if (eRefDist < eDist)
+            {
+            eDist = eRefDist;
+            ends[i] = j;
+            }
+          }
+        }
+      
+      if (ends[i] < starts[i])
+        {
+        unsigned long tmp = starts[i];
+        starts[i] = ends[i];
+        ends[i] = tmp;
+        }
+    
+      //std::cout << starts[i] << " - " << ends[i] << std::endl;
+        
+      nOutPoints += (ends[i] - starts[i] + 1);
+      }
+    
+    
+    typename MeshType::Pointer outMesh = MeshType::New();
+    outMesh->GetPoints()->Reserve(nOutPoints);
+    
+    typename MeshType::PointDataContainer::Pointer pointData = MeshType::PointDataContainer::New();
+    pointData->Initialize();
+    outMesh->SetPointData( pointData );
+
+    typename MeshWriterType::LineSetType::Pointer outLines = MeshWriterType::LineSetType::New();
+    outLines->Initialize();
+    
+    unsigned long ptIdx = 0;
+    
+    for (unsigned int i=0; i<lines->Size(); i++)
+      {
+      typename MeshWriterType::LineType line = lines->GetElement(i);
+      
+      typename MeshWriterType::LineType subline;
+      subline.SetSize(ends[i] - starts[i] + 1);
+      unsigned long subIdx = 0;
+      
+      for (unsigned long j=starts[i]; j<=ends[i]; j++)
+        {
+        outMesh->SetPoint(ptIdx, points->GetPoints()->GetElement( line[j] ));
+        subline[subIdx] = ptIdx;
+        ++subIdx;
+        ++ptIdx;
+        }
+      outLines->InsertElement(outLines->Size(), subline);
+      }   
+
+    
+    typename MeshWriterType::Pointer meshWriter = MeshWriterType::New();
+    meshWriter->SetFileName( outputOption->GetValue( 0 ) );
+    meshWriter->SetInput( outMesh );
+    meshWriter->SetLines( outLines );
+    meshWriter->Update();
+    
+    
+    std::cout << "extract not yet implemented" << std::endl;
+    }       
+  else if( strcmp( value.c_str(), "extract" ) == 0 ) 
+    {
+    std::cout << "extract not yet implemented" << std::endl;
+    }    
+  else
+    { 
+    std::cerr << "unary:  Unrecognized option." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if( outputOption )
+    {
+
+    }
+
+
+
+
+  return EXIT_SUCCESS;
+}
+
 
 
 
@@ -873,19 +1172,19 @@ int petioleFibers( itk::ants::CommandLineParser *parser )
     }
 
   // Simple unary ops on fibers
-  itk::ants::CommandLineParser::OptionType::Pointer unaryFiberOption = parser->GetOption( "fibers" );
-  if( unaryFiberOption && unaryFiberOption->GetNumberOfValues() > 0 )
+  itk::ants::CommandLineParser::OptionType::Pointer fibersOption = parser->GetOption( "fibers" );
+  if( fibersOption && fibersOption->GetNumberOfValues() > 0 )
     {
     switch( dimension )
       {
       case 2:
         {
-        fibersFiberOps<2, float>( unaryFiberOption, outputOption );
+        FiberOps<2, float>( fibersOption, outputOption );
         break;
         }
       case 3:
         {
-        fibersFiberOps<3, float>( unaryFiberOption, outputOption );
+        FiberOps<3, float>( fibersOption, outputOption );
         break;
         }
       default:
@@ -897,6 +1196,35 @@ int petioleFibers( itk::ants::CommandLineParser *parser )
       }
     return EXIT_SUCCESS;
     } 
+    
+  // routines for manipulating the point-data of a fiber bundle
+  itk::ants::CommandLineParser::OptionType::Pointer pointdataOption = parser->GetOption( "point-data" );
+  if( pointdataOption && pointdataOption->GetNumberOfValues() > 0 )
+    {
+    
+    
+    switch( dimension )
+      {
+      case 2:
+        {
+        PointData<2, float>( pointdataOption, outputOption, parser->GetUnknownOptions() );
+        break;
+        }
+      case 3:
+        {
+        PointData<3, float>( pointdataOption, outputOption, parser->GetUnknownOptions() );
+        break;
+        }
+      default:
+        {
+        std::cerr << "Unsupported dimension." << std::endl;
+        return EXIT_FAILURE;
+        break;
+        }
+      }
+    return EXIT_SUCCESS;
+    } 
+    
 
 
   // BSpline related operations
@@ -961,6 +1289,18 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
   option->SetDescription( description );
   parser->AddOption( option );
   }
+
+  {
+  std::string description =
+    std::string( "Routines related to point-data" );
+
+  OptionType::Pointer option = OptionType::New();
+  option->SetLongName( "point-data" );
+  option->SetUsageOption( 0, "arc-length[ fibers, data-name ]" );
+  option->SetUsageOption( 1, "normalize[ fibers, data-name ]" );
+  option->SetDescription( description );
+  parser->AddOption( option );
+  }
   
   {
   std::string description =
@@ -969,7 +1309,7 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
   OptionType::Pointer option = OptionType::New();
   option->SetLongName( "b-spline" );
   option->SetUsageOption( 0, "fit-curve[ fibers ]" );
-  option->SetUsageOption( 0, "resample-curve[ fibers ]" );
+  option->SetUsageOption( 1, "resample-curve[ fibers ]" );
   option->SetDescription( description );
   parser->AddOption( option );
   }
