@@ -24,5 +24,5 @@ analysis. Typically, these streamlines are derived from diffusion tensor MRI
 tractography methods. A useful tool for generating the streamlines is the 
 Camino toolkit ( http://http://web4.cs.ucl.ac.uk/research/medic/camino/pmwiki/pmwiki.php )
 
-2) petioleConnecivity - A tool for exploring methods for measuring connectivity. This includes
+2) petioleConnectivity - A tool for exploring methods for measuring connectivity. This includes
 an emphasis on graph-based methods for measuring structural connectivity. 
