@@ -20,6 +20,7 @@
 #include "itkGraphSource.h"
 #include "itkObjectFactory.h"
 #include "itkDefaultImageToGraphFunctor.h"
+#include "antsVtkPolyDataFileReader.h"
 
 namespace itk
 {
@@ -71,6 +72,10 @@ public:
   typedef typename GraphType::EdgePointerType       EdgePointerType; 
   typedef typename GraphType::EdgeIdentifierType    EdgeIdentifierType; 
   typedef typename GraphTraitsType::EdgeWeightType  EdgeWeightType;
+  
+  typedef Mesh<float, ImageType::ImageDimension>    MeshType;
+  typedef typename MeshType::PointType              PointType;
+  typedef ants::VtkPolyDataFileReader<MeshType>     VtkReaderType;
 
   /** Set/Get the name of the file where data are written. */
   itkSetStringMacro( FileName );

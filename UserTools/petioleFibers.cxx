@@ -182,13 +182,13 @@ typename itk::VectorContainer<unsigned int, float>::Pointer ParameterizeBSplineB
 
 
 template <unsigned int Dimension, class PixelType>
-int UtilityFiberOps( itk::ants::CommandLineParser::OptionType *option,
+int fibersFiberOps( itk::ants::CommandLineParser::OptionType *option,
   itk::ants::CommandLineParser::OptionType *outputOption = NULL )
 {
 
   if( option->GetNumberOfParameters( 0 ) < 1 )
     {
-    std::cerr << "utility:  Incorrect number of parameters." << std::endl;
+    std::cerr << "fibers:  Incorrect number of parameters." << std::endl;
     return EXIT_FAILURE; 
     }
 
@@ -873,19 +873,19 @@ int petioleFibers( itk::ants::CommandLineParser *parser )
     }
 
   // Simple unary ops on fibers
-  itk::ants::CommandLineParser::OptionType::Pointer unaryFiberOption = parser->GetOption( "utility" );
+  itk::ants::CommandLineParser::OptionType::Pointer unaryFiberOption = parser->GetOption( "fibers" );
   if( unaryFiberOption && unaryFiberOption->GetNumberOfValues() > 0 )
     {
     switch( dimension )
       {
       case 2:
         {
-        UtilityFiberOps<2, float>( unaryFiberOption, outputOption );
+        fibersFiberOps<2, float>( unaryFiberOption, outputOption );
         break;
         }
       case 3:
         {
-        UtilityFiberOps<3, float>( unaryFiberOption, outputOption );
+        fibersFiberOps<3, float>( unaryFiberOption, outputOption );
         break;
         }
       default:
@@ -950,10 +950,10 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
 
   {
   std::string description =
-    std::string( "Utility operations on fibers (streamlines)" );
+    std::string( "fibers operations on fibers (streamlines)" );
 
   OptionType::Pointer option = OptionType::New();
-  option->SetLongName( "utility" );
+  option->SetLongName( "fibers" );
   option->SetUsageOption( 0, "parallelize[ fibers ]" );
   option->SetUsageOption( 1, "extract[ fibers, start_index, end_index ]" );
   option->SetUsageOption( 2, "reverse[ fibers ]" );

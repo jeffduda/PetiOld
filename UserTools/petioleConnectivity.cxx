@@ -14,7 +14,7 @@
 #include "itkGraph.h"
 #include "itkBoykovGraphTraits.h"
 #include "antsDijkstrasGraphTraits.h"
-#include "antsGraphFileWriter.h"
+#include "itkGraphFileWriter.h"
 #include "itkGraphFileReader.h"
 #include "antsCommandLineOption.h"
 #include "antsCommandLineParser.h"
@@ -42,7 +42,7 @@ int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
   typedef itk::Graph<GraphTraitsType>                      GraphType;
   
 
-  typedef itk::ants::GraphFileWriter<GraphType>      GraphWriterType;
+  typedef itk::GraphFileWriter<GraphType>      GraphWriterType;
   typedef itk::GraphFileReader<GraphType>            GraphReaderType;
 
   if( option->GetNumberOfParameters( 0 ) < 1 )
@@ -92,7 +92,6 @@ int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
     typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
     writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
     writeGraph->SetInput( output );
-    //writeGraph->
     writeGraph->Update();
     }
 
@@ -120,7 +119,7 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
   typedef itk::ants::DijkstrasGraphTraits<float, 3> GraphTraitsType;
   typedef itk::Graph<GraphTraitsType>           GraphType;
   typedef GraphType::NodePointerType                   NodePointerType;
-  typedef itk::ants::GraphFileWriter<GraphType>      GraphWriterType;
+  typedef itk::GraphFileWriter<GraphType>      GraphWriterType;
   typedef itk::GraphFileReader<GraphType>      GraphReaderType;
   typedef itk::ants::DijkstrasPathGraphFilter<GraphType> FilterType;
 
@@ -179,6 +178,7 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
     
     std::cout << "# Paths = " << path.size() << std::endl;
     
+    /*
     vtkPoints * vtkPoints = vtkPoints::New();
     vtkPoints->Initialize();
     
@@ -202,9 +202,6 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
       delete [] pathLine;
       }
       
-    
-    
-    
     vtkPolyData * polydata = vtkPolyData::New();
     polydata->SetPoints( vtkPoints );
     polydata->SetLines( vtkPath );
@@ -213,6 +210,7 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
     writer->SetInput( polydata );
     writer->SetFileName( outputOption->GetValue( 0 ).c_str() );
     writer->Update();
+    */
 
    }
   else
@@ -243,7 +241,7 @@ int GraphWeights( itk::ants::CommandLineParser::OptionType *option,
   typedef itk::ants::DijkstrasGraphTraits<float, 3> GraphTraitsType;
   typedef itk::Graph<GraphTraitsType>           GraphType;
   typedef GraphType::NodePointerType                   NodePointerType;
-  typedef itk::ants::GraphFileWriter<GraphType>      GraphWriterType;
+  typedef itk::GraphFileWriter<GraphType>      GraphWriterType;
   typedef itk::GraphFileReader<GraphType>      GraphReaderType;
   typedef itk::ants::DijkstrasPathGraphFilter<GraphType> FilterType;
   
@@ -476,7 +474,7 @@ int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *optio
   typedef itk::ants::DijkstrasGraphTraits<unsigned int, 3> GraphTraitsType;
   typedef itk::Graph<GraphTraitsType>           GraphType;
   typedef itk::ZaleskyDiffusionTensorConnectivityGraphFilter<LabelImageType,ImageType,GraphType> GraphSourceType;
-  typedef itk::ants::GraphFileWriter<GraphType>      GraphWriterType;
+  typedef itk::GraphFileWriter<GraphType>      GraphWriterType;
   typedef itk::GraphFileReader<GraphType>      GraphReaderType;
 
   if( option->GetNumberOfParameters( 0 ) < 1 )

@@ -19,13 +19,6 @@
 
 #include "itkGraphFileReader.h"
 
-#include "vtkPoints.h"
-#include "vtkPolyData.h"
-#include "vtkCellArray.h"
-#include "vtkTriangleFilter.h"
-#include "vtkPolyDataReader.h"
-#include "vtkSmartPointer.h"
-
 namespace itk
 {
 
@@ -135,50 +128,42 @@ GraphFileReader<TInputImage, TOutputGraph>
   input = static_cast<const ImageType *>( this->GetInput( 0 ) );
   GraphPointer output = this->GetOutput();
   
-  vtkSmartPointer<vtkPolyDataReader> vtkReader = vtkSmartPointer<vtkPolyDataReader>::New();
-  vtkReader->SetFileName( this->m_FileName.c_str() );
-  vtkReader->Update();
+  typename VtkReaderType::Pointer reader = VtkReaderType::New();
+  reader->SetFileName( this->m_FileName );
+  reader->Update();
   
-  vtkDataArray * nodeWeights = vtkReader->GetOutput()->GetPointData()->GetArray( "node-weights" );
-  vtkDataArray * edgeWeights = vtkReader->GetOutput()->GetCellData()->GetArray( "edge-weights" );
-
-  for (unsigned int i=0; i<vtkReader->GetOutput()->GetNumberOfPoints(); i++)
+  for (unsigned int i=0; i<reader->GetOutput()->GetNumberOfPoints(); i++)
     {
     NodePointerType node = output->CreateNewNode();
     for (unsigned int j=0; j<ImageType::ImageDimension; j++)
       {
-      node->ImageIndex[j] = vtkReader->GetOutput()->GetPoint( i )[j];
+      node->ImageIndex[j] = reader->GetOutput()->GetPoint( i )[j];
       }
-    if (nodeWeights != NULL)
-      {
-      node->Weight = nodeWeights->GetComponent(i,0);
-      }
+      
+    //if (nodeWeights != NULL)
+    //  {
+    //  node->Weight = nodeWeights->GetComponent(i,0);
+    //  }
+    
     }
   
-  vtkCellArray * lines = vtkReader->GetOutput()->GetLines();
-  lines->InitTraversal();
-  vtkIdType nPoints=0;
-  vtkIdType * points = new vtkIdType [ lines->GetMaxCellSize() ];
-  vtkIdType edgeId = 0;
-  
-  while( lines->GetNextCell( nPoints, points ) )
+  typename VtkReaderType::LineSetType::Pointer lines = reader->GetLines();  
+  for (unsigned int j=0; j<lines->Size(); j++)
     {
-    if (nPoints == 2)
+    typename VtkReaderType::LineType line = lines->GetElement(j);
+    if (line.Size() == 2)
       {
       EdgePointerType edge = output->CreateNewEdge();
-      edge->SourceIdentifier = points[0];
-      edge->TargetIdentifier = points[1];
-      
-      if (edgeWeights != NULL)
-        {
-        edge->Weight = edgeWeights->GetComponent(edgeId,0);
-        } 
-        
-      ++edgeId;
+      edge->SourceIdentifier = line[0];
+      edge->TargetIdentifier = line[1];
       }
+      
+    //if (edgeWeights != NULL)
+    //  {
+    //  edge->Weight = edgeWeights->GetComponent(j,0);
+    //  }  
+      
     }
-    
-  delete [] points;
 
 }
 
