@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkZaleskyDiffusionTensorConnectivityGraphFilter.txx,v $
+  Module:    $RCSfile: itkZaleskyDiffusionTensorConnectivityGraphFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkZaleskyDiffusionTensorConnectivityGraphFilter_txx
-#define __itkZaleskyDiffusionTensorConnectivityGraphFilter_txx
+#ifndef __itkZaleskyDiffusionTensorConnectivityGraphFilter_hxx
+#define __itkZaleskyDiffusionTensorConnectivityGraphFilter_hxx
 
 #include "itkZaleskyDiffusionTensorConnectivityGraphFilter.h"
 #include "itkDefaultImageToGraphFunctor.h"

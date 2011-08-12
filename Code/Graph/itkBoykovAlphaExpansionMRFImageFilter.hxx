@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkBoykovAlphaExpansionMRFImageFilter.txx,v $
+  Module:    $RCSfile: itkBoykovAlphaExpansionMRFImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $ $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkBoykovAlphaExpansionMRFImageFilter_txx
-#define __itkBoykovAlphaExpansionMRFImageFilter_txx
+#ifndef __itkBoykovAlphaExpansionMRFImageFilter_hxx
+#define __itkBoykovAlphaExpansionMRFImageFilter_hxx
 
 #include "itkBoykovAlphaExpansionMRFImageFilter.h"
 #include "itkBoykovMinCutGraphFilter.h"

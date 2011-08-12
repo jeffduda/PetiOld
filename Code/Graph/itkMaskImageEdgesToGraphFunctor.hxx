@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkMaskImageEdgesToGraphFunctor.txx,v $
+  Module:    $RCSfile: itkMaskImageEdgesToGraphFunctor.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkMaskImageEdgesToGraphFunctor_txx
-#define __itkMaskImageEdgesToGraphFunctor_txx
+#ifndef __itkMaskImageEdgesToGraphFunctor_hxx
+#define __itkMaskImageEdgesToGraphFunctor_hxx
 
 #include "itkMaskImageEdgesToGraphFunctor.h"
 #include "itkNeighborhood.h"

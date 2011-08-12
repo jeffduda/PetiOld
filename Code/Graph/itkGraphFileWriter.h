@@ -84,7 +84,7 @@ private:
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGraphFileWriter.txx"
+#include "itkGraphFileWriter.hxx"
 #endif
 
 #endif

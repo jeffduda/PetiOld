@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGraphFileWriter.txx,v $
+  Module:    $RCSfile: itkGraphFileWriter.hxx,v $
   Language:  C++
   Date:      $Date: 2009/03/04 23:10:58 $
   Version:   $Revision: 1.18 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGraphFileWriter_txx
-#define __itkGraphFileWriter_txx
+#ifndef __itkGraphFileWriter_hxx
+#define __itkGraphFileWriter_hxx
 
 #include "itkGraphFileWriter.h"
 #include <fstream>

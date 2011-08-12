@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGraphToImageFilter.txx,v $
+  Module:    $RCSfile: itkGraphToImageFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -14,8 +14,8 @@
   PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGraphToImageFilter_txx
-#define __itkGraphToImageFilter_txx
+#ifndef __itkGraphToImageFilter_hxx
+#define __itkGraphToImageFilter_hxx
 
 #include "itkGraphToImageFilter.h"
 #include "itkImageRegionIterator.h"

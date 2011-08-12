@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: antsDijkstrasPathGraphFilter.txx,v $
+  Module:    $RCSfile: antsDijkstrasPathGraphFilter.hxx,v $
   Language:  C++
   Date:
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __antsDijkstrasPathGraphFilter_txx
-#define __antsDijkstrasPathGraphFilter_txx
+#ifndef __antsDijkstrasPathGraphFilter_hxx
+#define __antsDijkstrasPathGraphFilter_hxx
 
 #include "antsDijkstrasPathGraphFilter.h"
 #include "itkGraphToGraphFilter.h"

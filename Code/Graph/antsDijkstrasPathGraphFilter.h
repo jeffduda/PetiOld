@@ -213,7 +213,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "antsDijkstrasPathGraphFilter.txx"
+#include "antsDijkstrasPathGraphFilter.hxx"
 #endif
 
 #endif

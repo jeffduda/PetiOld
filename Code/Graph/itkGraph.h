@@ -317,7 +317,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkGraph.txx"
+#include "itkGraph.hxx"
 #endif
 
 #endif

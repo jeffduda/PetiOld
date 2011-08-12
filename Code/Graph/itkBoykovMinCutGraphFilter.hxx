@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkBoykovMinCutGraphFilter.txx,v $
+  Module:    $RCSfile: itkBoykovMinCutGraphFilter.hxx,v $
   Language:  C++
   Date:
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkBoykovMinCutGraphFilter_txx
-#define __itkBoykovMinCutGraphFilter_txx
+#ifndef __itkBoykovMinCutGraphFilter_hxx
+#define __itkBoykovMinCutGraphFilter_hxx
 
 #include "itkBoykovMinCutGraphFilter.h"
 #include "itkGraphToGraphFilter.h"

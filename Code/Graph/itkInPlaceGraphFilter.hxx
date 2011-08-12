@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkInPlaceGraphFilter.txx,v $
+  Module:    $RCSfile: itkInPlaceGraphFilter.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkInPlaceGraphFilter_txx
-#define __itkInPlaceGraphFilter_txx
+#ifndef __itkInPlaceGraphFilter_hxx
+#define __itkInPlaceGraphFilter_hxx
 #include "itkInPlaceGraphFilter.h"
 
 

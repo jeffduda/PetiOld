@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkBoykovImageToGraphFunctor.txx,v $
+  Module:    $RCSfile: itkBoykovImageToGraphFunctor.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkBoykovImageToGraphFunctor_txx
-#define __itkBoykovImageToGraphFunctor_txx
+#ifndef __itkBoykovImageToGraphFunctor_hxx
+#define __itkBoykovImageToGraphFunctor_hxx
 
 #include "itkBoykovImageToGraphFunctor.h"
 #include "vnl/vnl_math.h"

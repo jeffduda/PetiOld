@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkDefaultImageToGraphFunctor.txx,v $
+  Module:    $RCSfile: itkDefaultImageToGraphFunctor.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkDefaultImageToGraphFunctor_txx
-#define __itkDefaultImageToGraphFunctor_txx
+#ifndef __itkDefaultImageToGraphFunctor_hxx
+#define __itkDefaultImageToGraphFunctor_hxx
 
 #include "itkDefaultImageToGraphFunctor.h"
 

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGraph.txx,v $
+  Module:    $RCSfile: itkGraph.hxx,v $
   Language:  C++
   Date:
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGraph_txx
-#define __itkGraph_txx
+#ifndef __itkGraph_hxx
+#define __itkGraph_hxx
 
 #include "itkGraph.h"
 

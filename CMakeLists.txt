@@ -104,7 +104,7 @@ IF(USE_VTK)
 ENDIF(USE_VTK)
 
 
-OPTION( USE_BOOST "Use Boost Libraries" OFF )
+OPTION( USE_BOOST "Use Boost Libraries" ON )
 if( USE_BOOST )
 
   SET(Boost_USE_STATIC_LIBS ON)

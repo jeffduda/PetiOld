@@ -89,7 +89,7 @@ private:
 } // end namespace itk
 
 //#ifndef ITK_MANUAL_INSTANTIATION
-//#include "itkZaleskyDiffusionTensorConnectivityGraphFunctor.txx"
+//#include "itkZaleskyDiffusionTensorConnectivityGraphFunctor.hxx"
 //#endif
 
 #endif

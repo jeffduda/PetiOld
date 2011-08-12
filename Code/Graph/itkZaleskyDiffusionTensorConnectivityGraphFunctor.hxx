@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkZaleskyDiffusionTensorConnectivityGraphFunctor.txx,v $
+  Module:    $RCSfile: itkZaleskyDiffusionTensorConnectivityGraphFunctor.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -17,8 +17,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkZaleskyDiffusionTensorConnectivityGraphFunctor_txx
-#define __itkZaleskyDiffusionTensorConnectivityGraphFunctor_txx
+#ifndef __itkZaleskyDiffusionTensorConnectivityGraphFunctor_hxx
+#define __itkZaleskyDiffusionTensorConnectivityGraphFunctor_hxx
 
 #include "itkZaleskyDiffusionTensorConnectivityGraphFunctor.h"
 

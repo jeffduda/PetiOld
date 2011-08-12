@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkGraphFileReader.txx,v $
+  Module:    $RCSfile: itkGraphFileReader.hxx,v $
   Language:  C++
   Date:      $Date: 2008/11/11 11:51:34 $
   Version:   $Revision: 1.1 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGraphFileReader_txx
-#define __itkGraphFileReader_txx
+#ifndef __itkGraphFileReader_hxx
+#define __itkGraphFileReader_hxx
 
 #include "itkGraphFileReader.h"
 

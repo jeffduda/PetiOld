@@ -89,7 +89,7 @@ private:
 } // end namespace itk
 
 //#ifndef ITK_MANUAL_INSTANTIATION
-//#include "itkMaskImageToGraphFunctor.txx"
+//#include "itkMaskImageToGraphFunctor.hxx"
 //#endif
 
 #endif

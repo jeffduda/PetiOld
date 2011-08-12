@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkGraphDuplicator.txx,v $
+Module:    $RCSfile: itkGraphDuplicator.hxx,v $
 Language:  C++
 Date:      $Date: 2008/11/11 11:51:34 $
 Version:   $Revision: 1.1 $
@@ -14,8 +14,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __itkGraphDuplicator_txx
-#define __itkGraphDuplicator_txx
+#ifndef __itkGraphDuplicator_hxx
+#define __itkGraphDuplicator_hxx
 
 #include "itkGraphDuplicator.h"
 
