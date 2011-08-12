@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: antsVtkPolyDataFileReader.txx,v $
+  Module:    $RCSfile: antsVtkPolyDataFileReader.hxx,v $
   Language:  C++
   Date:      $Date: 2009/03/13 19:48:16 $
   Version:   $Revision: 1.23 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __antsVtkPolyDataFileReader_txx
-#define __antsVtkPolyDataFileReader_txx
+#ifndef __antsVtkPolyDataFileReader_hxx
+#define __antsVtkPolyDataFileReader_hxx
 
 #include "antsVtkPolyDataFileReader.h"
 

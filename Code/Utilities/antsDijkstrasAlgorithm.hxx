@@ -7,8 +7,8 @@
   Version:   $Revision: 1.1 $
 
 =========================================================================*/
-#ifndef _antsDijkstrasAlgorithm_txx_
-#define _antsDijkstrasAlgorithm_txx_
+#ifndef _antsDijkstrasAlgorithm_hxx_
+#define _antsDijkstrasAlgorithm_hxx_
 
 #include "antsDijkstrasAlgorithm.h"
 

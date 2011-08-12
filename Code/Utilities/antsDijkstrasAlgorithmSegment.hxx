@@ -1,14 +1,14 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit (ITK)
-  Module:    $RCSfile: antsDijkstrasAlgorithmSegment.txx,v $
+  Module:    $RCSfile: antsDijkstrasAlgorithmSegment.hxx,v $
   Language:  C++
   Date:      $Date: 2009/10/20 20:16:43 $
   Version:   $Revision: 1.1 $
 
 =========================================================================*/
-#ifndef _antsDijkstrasAlgorithmSegment_txx_
-#define _antsDijkstrasAlgorithmSegment_txx_
+#ifndef _antsDijkstrasAlgorithmSegment_hxx_
+#define _antsDijkstrasAlgorithmSegment_hxx_
 
 #include "antsDijkstrasAlgorithmSegment.h"
 

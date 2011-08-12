@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit (ITK)
-  Module:    $RCSfile: itkGeodesicPaths.txx,v $
+  Module:    $RCSfile: itkGeodesicPaths.hxx,v $
   Language:  C++
   Date:      $Date: 2009/10/20 20:16:43 $
   Version:   $Revision: 1.1 $

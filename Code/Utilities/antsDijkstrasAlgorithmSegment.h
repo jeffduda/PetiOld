@@ -166,7 +166,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "antsDijkstrasAlgorithmSegment.txx"
+#include "antsDijkstrasAlgorithmSegment.hxx"
 #endif
 
 #endif

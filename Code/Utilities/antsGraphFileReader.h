@@ -101,7 +101,7 @@ private:
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "antsGraphFileReader.txx"
+#include "antsGraphFileReader.hxx"
 #endif
 
 #endif

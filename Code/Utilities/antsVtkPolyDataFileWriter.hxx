@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: antsVtkPolyDataFileWriter.txx,v $
+  Module:    $RCSfile: antsVtkPolyDataFileWriter.hxx,v $
   Language:  C++
   Date:      $Date: 2009/03/04 23:10:58 $
   Version:   $Revision: 1.18 $
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef __antsVtkPolyDataFileWriter_txx
-#define __antsVtkPolyDataFileWriter_txx
+#ifndef __antsVtkPolyDataFileWriter_hxx
+#define __antsVtkPolyDataFileWriter_hxx
 
 #include "antsVtkPolyDataFileWriter.h"
 #include "itkImageFileWriter.h"

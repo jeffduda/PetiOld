@@ -163,7 +163,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "antsVtkPolyDataSetFileReader.txx"
+#include "antsVtkPolyDataSetFileReader.hxx"
 #endif
 
 #endif //_antsVtkPolyDataFileReader_h

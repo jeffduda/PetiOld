@@ -251,7 +251,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-//#include "antsGraphSearchNode.txx"
+//#include "antsGraphSearchNode.hxx"
 #endif
 
 #endif
