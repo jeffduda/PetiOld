@@ -19,6 +19,7 @@
 
 #include "antsVtkPolyDataFileWriter.h"
 #include "itkImageFileWriter.h"
+#include "itkByteSwapper.h"
 
 #include <fstream>
 
@@ -32,11 +33,11 @@ template<class TInputMesh>
 VtkPolyDataFileWriter<TInputMesh>
 ::VtkPolyDataFileWriter()
 {
+  this->m_WriteBinary = true;
   this->m_Input = NULL;
   this->m_FileName = "";
   this->m_MultiComponentScalarSets = NULL;
   this->m_Lines = NULL;
-
   this->m_ImageSize.Fill( 0 );
 }
 
@@ -173,7 +174,14 @@ VtkPolyDataFileWriter<TInputMesh>
 
   outputFile << "# vtk DataFile Version 2.0" << std::endl;
   outputFile << "File written by antsVtkPolyDataFileWriter" << std::endl;
-  outputFile << "ASCII" << std::endl;
+  if (this->m_WriteBinary)
+    {
+    outputFile << "BINARY" << std::endl;
+    }
+  else
+    {
+    outputFile << "ASCII" << std::endl;
+    }
   outputFile << "DATASET POLYDATA" << std::endl;
 
   // POINTS go first
@@ -185,19 +193,49 @@ VtkPolyDataFileWriter<TInputMesh>
     = this->m_Input->GetPoints()->Begin();
   typename InputMeshType::PointsContainerIterator pointEnd
     = this->m_Input->GetPoints()->End();
-  while( pointIterator != pointEnd )
+  
+  if ( this->m_WriteBinary )
     {
-    PointType point = pointIterator.Value();
-    outputFile << point[0] << " " << point[1];
-    if( Dimension == 2 )
+
+    itkDebugMacro( "Writing data as binary" );     
+    float p;
+    float * ptData = new float [ numberOfPoints*3 ];
+    //inputFile.read( reinterpret_cast< char * >( ptData ), 3 * numberOfPoints * sizeof(p) );
+    //ByteSwapper<float>::SwapRangeFromSystemToBigEndian(ptData,numberOfPoints*3); 
+    
+    unsigned long idx = 0;
+    while ( pointIterator !=  pointEnd )
       {
-      outputFile << " 0 " << std::endl;
+      ptData[idx] = pointIterator.Value()[0];
+      ++idx;
+      ptData[idx] = pointIterator.Value()[1];
+      ++idx;
+      ptData[idx] = pointIterator.Value()[2];
+      ++idx;
+      pointIterator++;
       }
-    else if( Dimension == 3 )
+    ByteSwapper<float>::SwapRangeFromSystemToBigEndian(ptData,numberOfPoints*3); 
+    outputFile.write( reinterpret_cast<char *>( ptData ), 3 * numberOfPoints * sizeof(p) );
+
+    delete [] ptData;
+
+    }
+  else
+    {
+    while( pointIterator != pointEnd )
       {
-      outputFile << " " << point[2] << " " << std::endl;
+      PointType point = pointIterator.Value();
+      outputFile << point[0] << " " << point[1];
+      if( Dimension == 2 )
+        {
+        outputFile << " 0 " << std::endl;
+        }
+      else if( Dimension == 3 )
+        {
+        outputFile << " " << point[2] << " " << std::endl;
+        }
+      pointIterator++;
       }
-    pointIterator++;
     }
   outputFile.close();  
 }  
@@ -432,20 +470,46 @@ VtkPolyDataFileWriter<TInputMesh>
       numberOfLines << " " << totalSize << std::endl; 
 
     It = this->m_Lines->Begin();
-    while( It != ItEnd )
+
+    if ( this->m_WriteBinary ) 
       {
-      unsigned int numberOfPoints = ( It.Value() ).Size(); 
-      outputFile << numberOfPoints << " ";
-      for( unsigned int d = 0; d < numberOfPoints; d++ )
+      int p;
+      int * ptData = new int [ totalSize ];
+       
+      unsigned long idx = 0;
+      while( It != ItEnd )
         {
-        outputFile << ( It.Value() )[d] << " "; 
+        ptData[idx] = It.Value().Size();
+        ++idx;
+        for (unsigned int i=0; i<It.Value().Size(); i++)
+          {
+          ptData[idx] = It.Value()[i];
+          ++idx;
+          }
+        ++It;
         }
-      outputFile << std::endl; 
-      ++It;  
+      ByteSwapper<int>::SwapRangeFromSystemToBigEndian(ptData,totalSize); 
+      outputFile.write( reinterpret_cast<char *>( ptData ), totalSize * sizeof(p) );
+      delete [] ptData;
+      }
+    else
+      {
+      while( It != ItEnd )
+        {
+        unsigned int numberOfPoints = ( It.Value() ).Size(); 
+        outputFile << numberOfPoints << " ";
+        for( unsigned int d = 0; d < numberOfPoints; d++ )
+          {
+          outputFile << ( It.Value() )[d] << " "; 
+          }
+        outputFile << std::endl; 
+        ++It;  
+        }
       }
     outputFile << std::endl;
-    outputFile.close();
-    }  
+    outputFile.close();  
+    }
+
 }
 
 template<class TInputMesh>
@@ -601,3 +665,6 @@ VtkPolyDataFileWriter<TInputMesh>
 } //end of namespace itk
 
 #endif
+
+
+

@@ -92,6 +92,9 @@ public:
   itkSetStringMacro( FileName );
   itkGetStringMacro( FileName );
 
+  itkSetMacro( WriteBinary, bool );
+  itkGetMacro( WriteBinary, bool );
+
   /** Specify other attributes */
   itkSetMacro( Lines, typename LineSetType::Pointer );
   
@@ -144,6 +147,8 @@ protected:
 private:
   VtkPolyDataFileWriter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
+
+  bool m_WriteBinary;
 
   void WritePointsToAvantsFile();
   void WritePointsToImageFile();

@@ -60,13 +60,27 @@ SET( PETIOLE_INCLUDE_DIRS
 
 INCLUDE_DIRECTORIES( ${PETIOLE_INCLUDE_DIRS} )
 
-LINK_DIRECTORIES( ${ITK_LIBRARY_PATH} ${VTK_LIBRARY_PATH} ${ANTS_LIBRARY_DIR} )
+LINK_DIRECTORIES( ${ITK_LIBRARY_PATH} ${VTK_LIBRARY_PATH}
+${ANTS_LIBRARY_DIR} )
+
+#-----------------------------------------------------------------------------#
+# Add ANTS command line library
+#
+ADD_LIBRARY( ANTSCommandLine
+../Code/Utilities/antsCommandLineParser.cxx
+../Code/Utilities/antsCommandLineOption.cxx )
 
 ADD_EXECUTABLE( petioleConnectivity petioleConnectivity.cxx )
 TARGET_LINK_LIBRARIES( petioleConnectivity ANTSCommandLine ${ITK_LIBRARIES}  )
 
 ADD_EXECUTABLE( petioleFibers petioleFibers.cxx )
-TARGET_LINK_LIBRARIES( petioleFibers ANTSCommandLine ${ITK_LIBRARIES}   )
+TARGET_LINK_LIBRARIES( petioleFibers ANTSCommandLine ${ITK_LIBRARIES} )
+
+ADD_EXECUTABLE( petioleUnwrapImage petioleUnwrapImage.cxx )
+TARGET_LINK_LIBRARIES( petioleUnwrapImage ANTSCommandLine ${ITK_LIBRARIES} )
+
+ADD_EXECUTABLE( petioleWrapImage petioleWrapImage.cxx )
+TARGET_LINK_LIBRARIES( petioleWrapImage ANTSCommandLine ${ITK_LIBRARIES} )
 
 # -----------------------------------------------------------------------------#
 # Perform corresponding testing

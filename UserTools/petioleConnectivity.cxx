@@ -21,6 +21,26 @@
 
 #include <limits.h>
 
+/* 
+ * Forward definitions of functions
+ */
+
+// Handle graphs derived from diffusion tensor images
+template <unsigned int ImageDimension, class PixelType>
+int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *option,
+                                 itk::ants::CommandLineParser::OptionType *outputOption = NULL );
+
+// General handler for graph generation
+template <unsigned int ImageDimension, class PixelType>
+int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
+                                 itk::ants::CommandLineParser::OptionType *outputOption = NULL );
+
+// Handle use of Dijkstras to find "shortest-paths" in graphs
+template <unsigned int ImageDimension, class PixelType>
+int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
+               itk::ants::CommandLineParser::OptionType *outputOption = NULL );
+
+
 void ConvertToLowerCase( std::string& str )
 {
   std::transform( str.begin(), str.end(), str.begin(), tolower );
@@ -57,6 +77,7 @@ int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
   ConvertToLowerCase( value );
   
   typename GraphType::Pointer output = NULL;
+  bool handleOutput = true;
 
   if( strcmp( value.c_str(), "binary-image" ) == 0 ) 
     {
@@ -81,13 +102,18 @@ int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
     std::cout << "# Edges = " << makeGraph->GetOutput()->GetTotalNumberOfEdges() << std::endl;
 
     }
+  else if (strcmp( value.c_str(), "diffusion-tensor-zalesky" ) == 0 )
+    {
+    DiffusionTensorConnectivity<ImageDimension, PixelType>( option, outputOption );
+    handleOutput = false;
+    }
   else
     { 
-    std::cerr << "make-graph:  Unrecognized option." << std::endl;
+    std::cerr << "--make-graph:  Unrecognized option." << std::endl;
     return EXIT_FAILURE;
     }
 
-  if( outputOption )
+  if( outputOption && handleOutput )
     {
     typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
     writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
@@ -101,14 +127,6 @@ int MakeGraph( itk::ants::CommandLineParser::OptionType *option,
   return EXIT_SUCCESS;
 }
 
-
-
-
-
-
-
-
-
 template <unsigned int ImageDimension, class PixelType>
 int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
   itk::ants::CommandLineParser::OptionType *outputOption = NULL )
@@ -117,17 +135,23 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
   typedef itk::ImageFileReader<LabeledImageType> LabeledImageReader;
 
   typedef itk::ants::DijkstrasGraphTraits<float, 3> GraphTraitsType;
-  typedef itk::Graph<GraphTraitsType>           GraphType;
-  typedef GraphType::NodePointerType                   NodePointerType;
-  typedef itk::GraphFileWriter<GraphType>      GraphWriterType;
-  typedef itk::GraphFileReader<GraphType>      GraphReaderType;
+  typedef itk::Graph<GraphTraitsType>               GraphType;
+  typedef GraphType::NodePointerType                NodePointerType;
+  typedef itk::GraphFileWriter<GraphType>           GraphWriterType;
+  typedef itk::GraphFileReader<GraphType>           GraphReaderType;
   typedef itk::ants::DijkstrasPathGraphFilter<GraphType> FilterType;
+
+  typedef std::list< GraphType::NodeIdentifierType >    ListType;
+
+  typedef itk::Mesh<float, 3> MeshType;
+
+  typedef itk::ants::VtkPolyDataFileWriter<MeshType> MeshWriterType;
 
   typename GraphReaderType::Pointer reader = GraphReaderType::New();
   reader->SetFileName( option->GetParameter( 0 ) );
   reader->Update();   
   typename GraphType::Pointer graph = reader->GetOutput();
-    
+
   std::string value = option->GetValue( 0 );
   ConvertToLowerCase( value );
 
@@ -140,15 +164,16 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
       std::cerr << "Incorrect number of parameters" << std::endl;
       return EXIT_FAILURE;
       }
-          
+
     typename LabeledImageReader::Pointer reader2 = LabeledImageReader::New();
     reader2->SetFileName( option->GetParameter(1) );
     reader2->Update();
-
     
     for (unsigned int i=0; i<graph->GetTotalNumberOfEdges(); i++)
       {
-      /*
+      // FIXME - Replace with using edge-weights via data-name
+      // passed as option
+
       typename LabeledImageType::PointType ptS;
       typename LabeledImageType::PointType ptT;
       
@@ -158,26 +183,45 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
       
       typename LabeledImageType::PointType::VectorType vector = ptS - ptT;
       graph->GetEdgePointer(i)->Weight = vector.GetNorm();
-      */
-      if (i < 20)
-        std::cout << graph->GetEdgePointer(i)->Weight << " ";
-
       }
-    
-    
+
     typename FilterType::Pointer dijkstras = FilterType::New();
     dijkstras->SetInput( graph );
     dijkstras->SetLabels( reader2->GetOutput() );
     //dijkstras->SetSourceNodes( sources );
     //dijkstras->SetTargetNodes( targets );
     dijkstras->Update();
-    
+
     graph = dijkstras->GetOutput();
 
     typename FilterType::NodeListContainerType path = dijkstras->GetTree( );
     
+    // FIXME - Extract points that are in the paths for smaller output
+    // file
+    ListType pointList;
+    for (unsigned int i=0; i<path.size(); i++)
+      {
+      for (unsigned int j=0; j<path[j].size(); j++)
+        {
+        //GraphType::NodeIdentifierType nodeId = path[j][i]->Identifier;
+        //pointList.insert( nodeId );
+        pointList.push_back( path[j][i]->Identifier );
+        }
+      }
+    pointList.unique();
+
     std::cout << "# Paths = " << path.size() << std::endl;
-    
+    std::cout << "# Points = " << pointList.size() << std::endl;
+
+    MeshType::Pointer mesh = MeshType::New();
+    mesh->GetPoints()->Initialize();
+    mesh->GetPoints()->Reserve( pointList.size() );
+
+    ListType::iterator it = pointList.begin();
+    while (it != pointList.end() )
+      {
+      
+
     /*
     vtkPoints * vtkPoints = vtkPoints::New();
     vtkPoints->Initialize();
@@ -211,7 +255,7 @@ int Dijkstras( itk::ants::CommandLineParser::OptionType *option,
     writer->SetFileName( outputOption->GetValue( 0 ).c_str() );
     writer->Update();
     */
-
+      }
    }
   else
     { 
@@ -345,7 +389,7 @@ int GraphWeights( itk::ants::CommandLineParser::OptionType *option,
       graph->GetEdgePointer(i)->Weight = ptS.EuclideanDistanceTo( ptT );
       
       typename TensorImageType::PointType::VectorType vector = ptS - ptT; 
-      float distance = vector.GetNorm();       
+      //float distance = vector.GetNorm();       
       vector.Normalize();
       
       graph->GetEdgePointer(i)->Weight = 1.0 - vcl_fabs(vector*sourcePDD) * vcl_fabs(vector*targetPDD);
@@ -435,7 +479,7 @@ int GraphWeights( itk::ants::CommandLineParser::OptionType *option,
       graph->GetEdgePointer(i)->Weight = ptS.EuclideanDistanceTo( ptT );
       
       typename TensorImageType::PointType::VectorType vector = ptS - ptT; 
-      float distance = vector.GetNorm();       
+      //float distance = vector.GetNorm();       
       vector.Normalize();
       
       graph->GetEdgePointer(i)->Weight = 1.0 - vcl_fabs(vector*sourcePDD) * vcl_fabs(vector*targetPDD);
@@ -465,7 +509,7 @@ int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *optio
   itk::ants::CommandLineParser::OptionType *outputOption = NULL )
 {
 	
-	typedef itk::DiffusionTensor3D<float> DiffusionTensor;
+  typedef itk::DiffusionTensor3D<float> DiffusionTensor;
   typedef itk::Image<DiffusionTensor, ImageDimension> ImageType;
   typedef itk::Image<unsigned int, ImageDimension> LabelImageType;
   typedef itk::ImageFileReader<ImageType> ReaderType;
@@ -501,8 +545,11 @@ int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *optio
   
   typename GraphType::Pointer output = NULL;
 
-  if( strcmp( value.c_str(), "zalesky" ) == 0 ) 
+  if( strcmp( value.c_str(), "diffusion-tensor-zalesky" ) == 0 ) 
     {
+
+    std::cout << "Computing the DTI-based Zalesky graph" << std::endl;
+
     typename GraphSourceType::Pointer makeGraph = GraphSourceType::New();
     makeGraph->SetInput( labels ); 
     makeGraph->SetDiffusionTensorImage( reader1->GetOutput() );
@@ -523,11 +570,10 @@ int DiffusionTensorConnectivity( itk::ants::CommandLineParser::OptionType *optio
 
   if( outputOption )
     {
-		std::cout << "Writer not yet implemented" << std::endl;
-    //typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
-    //writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
-    //writeGraph->SetInput( output );
-    //writeGraph->Update();
+    typename GraphWriterType::Pointer writeGraph = GraphWriterType::New();
+    writeGraph->SetFileName( outputOption->GetValue( 0 ) ); 
+    writeGraph->SetInput( output );
+    writeGraph->Update();
     }
 
 
@@ -625,34 +671,6 @@ int Connectivity( itk::ants::CommandLineParser *parser )
     return EXIT_SUCCESS;
     }
 
-
-  // Voxel-wise binary operations
-  itk::ants::CommandLineParser::OptionType::Pointer diffusionTensorOption =
-    parser->GetOption( "diffusion-tensor" );
-  if( diffusionTensorOption && diffusionTensorOption->GetNumberOfValues() > 0 )
-    {
-    switch( dimension )
-      {
-      case 2:
-        {
-        //DiffusionTensorConnectivity<2, float>( diffusionTensorOption, outputOption );
-        break;
-        }
-      case 3:
-        {
-        //DiffusionTensorConnectivity<3, float>( diffusionTensorOption, outputOption );
-        break;
-        }
-      default:
-        {
-        std::cerr << "Unsupported dimension." << std::endl;
-        return EXIT_FAILURE;
-        break;
-        }
-      }
-    return EXIT_SUCCESS;
-    }
-
   // Voxel-wise binary operations
   itk::ants::CommandLineParser::OptionType::Pointer timeOption =
     parser->GetOption( "time" );
@@ -698,7 +716,7 @@ int Connectivity( itk::ants::CommandLineParser *parser )
         }
       case 3:
         {
-        //Dijkstras<3, float>( dijkstrasOption, outputOption );
+        Dijkstras<3, float>( dijkstrasOption, outputOption );
         break;
         }
       default:
@@ -726,7 +744,7 @@ int Connectivity( itk::ants::CommandLineParser *parser )
         }
       case 3:
         {
-        //GraphWeights<3, float>( graphWeightsOption, outputOption );
+        GraphWeights<3, float>( graphWeightsOption, outputOption );
         break;
         }
       default:
@@ -748,27 +766,15 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
 
   {
   std::string description =
-    std::string( "Structural connectivity as measured with DTI" );
+    std::string( "Algorithms for creating a graph" );
 
   OptionType::Pointer option = OptionType::New();
   option->SetLongName( "make-graph" );
   option->SetUsageOption( 0, "binary-image[image]" );
+  option->SetUsageOption( 1, "diffusion-tensor-zalesky[ image, labels ]" );
   option->SetDescription( description );
   parser->AddOption( option );
   }
-
-
-  {
-  std::string description =
-    std::string( "Structural connectivity as measured with DTI" );
-
-  OptionType::Pointer option = OptionType::New();
-  option->SetLongName( "diffusion-tensor" );
-  option->SetUsageOption( 0, "zalesky[image1,labelimage]" );
-  option->SetDescription( description );
-  parser->AddOption( option );
-  }
-
 
   {
   std::string description =
@@ -800,6 +806,9 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
   option->SetLongName( "graph-weights" );
   option->SetUsageOption( 0, "edge-euclidean-distance[graph,referenceimage]");
   option->SetUsageOption( 1, "edge-tensor-fa[graph,tensorimage]");
+  option->SetUsageOption( 2, "edge-tensor-ppd[ graph, tensorimage ]");
+  option->SetUsageOption( 3, "edge-tensor-tsp[ graph, tensorimage ]");
+  option->SetUsageOption( 4, "edge-tensor-projection[ graph, tensorimage ]");
   option->SetDescription( description );
   parser->AddOption( option );
   }
@@ -837,6 +846,9 @@ void InitializeCommandLineOptions( itk::ants::CommandLineParser *parser )
   }
 }
 
+/* 
+ * Main progam
+ */
 int main( int argc, char *argv[] )
 {
   itk::ants::CommandLineParser::Pointer parser =
@@ -897,5 +909,4 @@ int main( int argc, char *argv[] )
   Connectivity( parser );
 
   exit( EXIT_SUCCESS );
-}
-
+} 
