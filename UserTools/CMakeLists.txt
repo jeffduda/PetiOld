@@ -82,6 +82,9 @@ TARGET_LINK_LIBRARIES( petioleUnwrapImage ANTSCommandLine ${ITK_LIBRARIES} )
 ADD_EXECUTABLE( petioleWrapImage petioleWrapImage.cxx )
 TARGET_LINK_LIBRARIES( petioleWrapImage ANTSCommandLine ${ITK_LIBRARIES} )
 
+ADD_EXECUTABLE( petioleImages petioleImages.cxx )
+TARGET_LINK_LIBRARIES( petioleImages ANTSCommandLine ${ITK_LIBRARIES} )
+
 # -----------------------------------------------------------------------------#
 # Perform corresponding testing
 #
